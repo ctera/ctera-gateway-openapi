@@ -1,0 +1,15 @@
+uwsgi:
+  buffer-size: 65536
+  module: ctera_gateway_openapi.app
+  callable: application
+  enable-threads: true
+  gevent: 100
+  gevent-early-monkey-patch: true
+  http: 0.0.0.0:9090
+  http-keepalive: 2
+  http-timeout: 3600
+  need-app: true
+  procname: ctera_gateway_openapi
+  socket-timeout: 60
+  logger: file:/tmp/ctera_gateway_openapi.logger
+  log-encoder: nl

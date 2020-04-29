@@ -1,0 +1,157 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: CTERA Gateway
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:9090/v1.0
+paths:
+  /users:
+    get:
+      summary: List all users
+      tags:
+        - users
+      responses:
+        '200':
+          description: An paged array of users
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a User
+      tags:
+        - users
+      requestBody:
+        description: User to add to the system
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update a user
+      tags:
+        - users
+      requestBody:
+        description: User Information
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/{userName}:
+    get:
+      summary: Info for a specific user
+      tags:
+        - users
+      parameters:
+        - name: userName
+          in: path
+          required: true
+          description: The username of the user to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a user
+      tags:
+        - users
+      parameters:
+        - name: userName
+          in: path
+          required: true
+          description: The username of the user to retrieve
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    User:
+      required:
+        - username
+      properties:
+        _uuid:
+          readOnly: true
+          type: string
+          format: uuid
+        uid:
+          type: integer
+        username:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      example:
+        _uuid: 8a82db21-15b5-4805-ac6b-36a558a0c69d
+        uid: 1
+        username: admin
+        fullName: Administrator
+        email: admin@example.com
+        password: admin
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
